@@ -1,26 +1,40 @@
 // File: src/app/login/page.tsx
 "use client";
 
-// ... (imports remain the same)
 import { useState } from "react";
 import Link from "next/link";
 import { signIn } from "next-auth/react";
+import { useRouter } from "next/navigation";
 import { ThemeSwitcher } from "@/components/ThemeSwitcher";
 import { GoogleIcon } from "@/components/GoogleIcon";
 
 export default function CustomerLoginPage() {
-  // ... (logic remains the same)
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+  const router = useRouter();
 
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    console.log("Customer login attempt with:", { email, password });
+    setError("");
+
+    const result = await signIn("credentials", {
+      email,
+      password,
+      redirect: false,
+    });
+
+    if (result?.error) {
+      setError("Invalid email or password. Please try again.");
+    } else if (result?.ok) {
+      // UPDATED: Redirect to the customer dashboard
+      router.push("/dashboard");
+    }
   };
 
   return (
     <main className="flex flex-col items-center justify-center min-h-screen px-4">
-      {/* ... (header and logo remain the same) ... */}
+      {/* ... (rest of the JSX remains the same) ... */}
       <div className="absolute top-4 right-4">
         <ThemeSwitcher />
       </div>
@@ -37,19 +51,13 @@ export default function CustomerLoginPage() {
             <h1 className="card-header">Welcome!</h1>
             <p className="card-subheader">Sign in to your account.</p>
           </div>
-
-          <div className="flex flex-col w-full gap-2">
-            {/* UPDATED: Using the new .google-btn class */}
-            <button
-              onClick={() => signIn("google", { callbackUrl: "/" })}
-              className="google-btn"
-            >
-              <GoogleIcon className="w-6 h-6" />
-              Sign In with Google
-            </button>
-          </div>
-
-          {/* ... (rest of the form remains the same) ... */}
+          <button
+            onClick={() => signIn("google", { callbackUrl: "/dashboard" })}
+            className="google-btn"
+          >
+            <GoogleIcon className="w-6 h-6" />
+            Sign In with Google
+          </button>
           <div className="flex items-center my-4">
             <hr className="w-full border-gray-300 dark:border-gray-700" />
             <span className="px-2 text-sm text-gray-500 dark:text-gray-400">
@@ -57,8 +65,8 @@ export default function CustomerLoginPage() {
             </span>
             <hr className="w-full border-gray-300 dark:border-gray-700" />
           </div>
-
           <form className="space-y-5" onSubmit={handleSubmit}>
+            {error && <p className="text-sm text-red-500">{error}</p>}
             <input
               type="email"
               required
@@ -82,16 +90,16 @@ export default function CustomerLoginPage() {
               >
                 Create an account
               </Link>
-              <a
+              <Link
                 href="/forgot-password"
                 className="font-medium text-amber-600 hover:text-amber-500 dark:text-amber-500 dark:hover:text-amber-400"
               >
                 Forgot password?
-              </a>
+              </Link>
             </div>
             <button
               type="submit"
-              className="w-full px-4 py-3 font-semibold text-white bg-amber-500 rounded-md shadow-sm hover:bg-amber-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-amber-500 transition-colors duration-300 dark:focus:ring-offset-black"
+              className="w-full px-4 py-3 font-semibold text-white bg-amber-500 rounded-md shadow-sm hover:bg-amber-600"
             >
               Sign In
             </button>

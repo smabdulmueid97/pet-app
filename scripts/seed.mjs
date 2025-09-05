@@ -2,6 +2,7 @@
 
 import { MongoClient } from "mongodb";
 import { faker } from "@faker-js/faker";
+import bcrypt from "bcryptjs";
 import dotenv from "dotenv";
 import path from "path";
 
@@ -25,7 +26,8 @@ function generateUsers(count, role) {
     users.push({
       name: faker.person.fullName(),
       email: faker.internet.email().toLowerCase(),
-      password: faker.internet.password(),
+      // Hash the password with a salt round of 10
+      password: bcrypt.hashSync(faker.internet.password(), 10),
       role: role,
       emailVerified: new Date(),
       image: faker.image.avatar(),
@@ -50,9 +52,35 @@ async function main() {
     console.log("🌱 Generating dummy data...");
     const customers = generateUsers(100, "customer");
     const staff = generateUsers(20, "staff");
-    const admins = generateUsers(5, "admin");
+    // Generate admins, but also add one known admin for testing
+    const admins = generateUsers(4, "admin");
 
-    const allUsers = [...customers, ...staff, ...admins];
+    // ADDING KNOWN USERS FOR EASY TESTING
+    const knownAdmin = {
+      name: "Test Admin",
+      email: "admin@test.com",
+      password: bcrypt.hashSync("password123", 10),
+      role: "admin",
+      emailVerified: new Date(),
+      image: "",
+    };
+
+    const knownCustomer = {
+      name: "Test Customer",
+      email: "customer@test.com",
+      password: bcrypt.hashSync("password123", 10),
+      role: "customer",
+      emailVerified: new Date(),
+      image: "",
+    };
+
+    const allUsers = [
+      ...customers,
+      ...staff,
+      ...admins,
+      knownAdmin,
+      knownCustomer,
+    ];
 
     console.log("📥 Inserting dummy data into the database...");
     const result = await usersCollection.insertMany(allUsers);
