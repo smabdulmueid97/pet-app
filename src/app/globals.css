@@ -1,0 +1,46 @@
+/* File: src/app/globals.css */
+
+@import "tailwindcss";
+
+@layer base {
+  body {
+    /* UPDATED: Solid mango yellow background for light mode */
+    @apply bg-amber-400;
+  }
+
+  .dark body {
+    @apply bg-black;
+  }
+}
+
+@layer components {
+  .login-card {
+    @apply p-6 space-y-5 bg-white rounded-xl shadow-lg;
+  }
+  .dark .login-card {
+    @apply bg-gray-900;
+  }
+
+  .form-input {
+    @apply w-full px-4 py-3 bg-gray-100 border-gray-300 rounded-md text-gray-800 placeholder-gray-500;
+    @apply focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent;
+  }
+  .dark .form-input {
+    @apply bg-gray-800 border-gray-700 text-gray-200 placeholder-gray-400;
+  }
+
+  /* ADDED: New classes for card titles */
+  .card-header {
+    @apply text-3xl font-bold text-gray-800;
+  }
+  .dark .card-header {
+    @apply text-gray-100;
+  }
+
+  .card-subheader {
+    @apply mt-2 text-sm text-gray-600;
+  }
+  .dark .card-subheader {
+    @apply text-gray-400;
+  }
+}
