@@ -3,36 +3,34 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
+    "dev": "next dev --turbopack",
     "build": "next build --turbopack",
     "start": "next start",
-    "lint": "eslint",
-    "db:seed": "node scripts/seed.mjs"
+    "lint": "eslint"
   },
   "dependencies": {
     "@auth/mongodb-adapter": "^3.10.0",
-    "@faker-js/faker": "^8.4.1",
-    "bcryptjs": "^2.4.3",
-    "dotenv": "^16.4.5",
-    "mongodb": "^6.8.0",
-    "next": "15.0.0-rc.0",
-    "next-auth": "^4.24.7",
+    "@faker-js/faker": "^10.0.0",
+    "@types/bcryptjs": "^3.0.0",
+    "bcryptjs": "^3.0.2",
+    "dotenv": "^17.2.2",
+    "mongodb": "^6.19.0",
+    "next": "15.5.2",
+    "next-auth": "^4.24.11",
     "next-themes": "^0.4.6",
-    "nodemailer": "^6.9.14",
     "postcss": "^8.5.6",
-    "react": "19.0.0-rc-f994737d14-20240522",
-    "react-dom": "19.0.0-rc-f994737d14-20240522",
-    "resend": "^3.4.0"
+    "react": "19.1.0",
+    "react-dom": "19.1.0",
+    "resend": "^6.0.2"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
     "@tailwindcss/postcss": "^4.1.13",
-    "@types/bcryptjs": "^2.4.6",
     "@types/node": "^20",
-    "@types/react": "^18",
-    "@types/react-dom": "^18",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
     "eslint": "^9",
-    "eslint-config-next": "15.0.0-rc.0",
+    "eslint-config-next": "15.5.2",
     "tailwindcss": "^4.1.13",
     "typescript": "^5"
   }
