@@ -6,26 +6,29 @@
     "dev": "next dev --turbopack",
     "build": "next build --turbopack",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "db:seed": "node scripts/seed.mjs"
   },
   "dependencies": {
     "@auth/mongodb-adapter": "^3.10.0",
-    "mongodb": "^6.19.0",
-    "next": "15.5.2",
-    "next-auth": "^4.24.11",
+    "@faker-js/faker": "^8.4.1",
+    "dotenv": "^16.4.5",
+    "mongodb": "^6.8.0",
+    "next": "15.0.0-rc.0",
+    "next-auth": "^4.24.7",
     "next-themes": "^0.4.6",
     "postcss": "^8.5.6",
-    "react": "19.1.0",
-    "react-dom": "19.1.0"
+    "react": "19.0.0-rc-f994737d14-20240522",
+    "react-dom": "19.0.0-rc-f994737d14-20240522"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
     "@tailwindcss/postcss": "^4.1.13",
     "@types/node": "^20",
-    "@types/react": "^19",
-    "@types/react-dom": "^19",
+    "@types/react": "^18",
+    "@types/react-dom": "^18",
     "eslint": "^9",
-    "eslint-config-next": "15.5.2",
+    "eslint-config-next": "15.0.0-rc.0",
     "tailwindcss": "^4.1.13",
     "typescript": "^5"
   }

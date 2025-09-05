@@ -44,3 +44,17 @@
     @apply text-gray-400;
   }
 }
+@layer components {
+  /* ... (keep .login-card, .form-input, .card-header, etc.) ... */
+
+  /* ADD THESE NEW RULES FOR THE GOOGLE BUTTON */
+  .google-btn {
+    @apply flex items-center justify-center w-full gap-3 px-4 py-3 font-semibold border rounded-md shadow-sm transition-colors;
+    /* Light mode styles */
+    @apply bg-gray-50 border-gray-300 text-gray-800 hover:bg-gray-100;
+  }
+  .dark .google-btn {
+    /* Dark mode styles */
+    @apply bg-gray-800 border-gray-700 text-gray-200 hover:bg-gray-700;
+  }
+}
