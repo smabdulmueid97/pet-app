@@ -79,7 +79,7 @@ export default function AdminLoginPage() {
             />
             <div className="flex items-center justify-end text-sm">
               <a
-                href="#"
+                href="/forgot-password"
                 className="font-medium text-amber-600 hover:text-amber-500 dark:text-amber-500 dark:hover:text-amber-400"
               >
                 Forgot password?

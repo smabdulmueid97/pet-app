@@ -83,7 +83,7 @@ export default function CustomerLoginPage() {
                 Create an account
               </Link>
               <a
-                href="#"
+                href="/forgot-password"
                 className="font-medium text-amber-600 hover:text-amber-500 dark:text-amber-500 dark:hover:text-amber-400"
               >
                 Forgot password?
