@@ -4,7 +4,9 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "./theme-provider";
-import { AuthProvider } from "./auth-provider"; // Import AuthProvider
+import { AuthProvider } from "./auth-provider";
+import Header from "@/components/Header"; // Import Header
+import Footer from "@/components/Footer"; // Import Footer
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -20,8 +22,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className={inter.className}>
-        {/* Wrap everything in AuthProvider */}
+      <body className={`${inter.className} flex flex-col min-h-screen`}>
         <AuthProvider>
           <ThemeProvider
             attribute="class"
@@ -29,7 +30,9 @@ export default function RootLayout({
             enableSystem
             disableTransitionOnChange
           >
-            {children}
+            <Header />
+            <main className="flex-grow">{children}</main>
+            <Footer />
           </ThemeProvider>
         </AuthProvider>
       </body>

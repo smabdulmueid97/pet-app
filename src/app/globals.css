@@ -4,7 +4,7 @@
 
 @layer base {
   body {
-    /* UPDATED: Solid mango yellow background for light mode */
+    /* Solid mango yellow background for light mode */
     @apply bg-amber-400;
   }
 
@@ -14,6 +14,7 @@
 }
 
 @layer components {
+  /* Card and Form Styles */
   .login-card {
     @apply p-6 space-y-5 bg-white rounded-xl shadow-lg;
   }
@@ -29,7 +30,6 @@
     @apply bg-gray-800 border-gray-700 text-gray-200 placeholder-gray-400;
   }
 
-  /* ADDED: New classes for card titles */
   .card-header {
     @apply text-3xl font-bold text-gray-800;
   }
@@ -43,11 +43,8 @@
   .dark .card-subheader {
     @apply text-gray-400;
   }
-}
-@layer components {
-  /* ... (keep .login-card, .form-input, .card-header, etc.) ... */
 
-  /* ADD THESE NEW RULES FOR THE GOOGLE BUTTON */
+  /* Google Button Styles */
   .google-btn {
     @apply flex items-center justify-center w-full gap-3 px-4 py-3 font-semibold border rounded-md shadow-sm transition-colors;
     /* Light mode styles */
@@ -56,5 +53,20 @@
   .dark .google-btn {
     /* Dark mode styles */
     @apply bg-gray-800 border-gray-700 text-gray-200 hover:bg-gray-700;
+  }
+
+  /* ADDED: Header and Footer Styles */
+  .app-header {
+    @apply sticky top-0 z-50 w-full shadow-md bg-amber-500 text-gray-800;
+  }
+  .dark .app-header {
+    @apply bg-black text-gray-200;
+  }
+
+  .app-footer {
+    @apply w-full py-6 mt-auto bg-amber-500 text-gray-800;
+  }
+  .dark .app-footer {
+    @apply bg-black text-gray-400;
   }
 }

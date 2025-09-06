@@ -8,39 +8,70 @@ export async function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl;
   const isLoggedIn = !!token;
 
-  const isAuthPage =
-    pathname.startsWith("/login") || pathname.startsWith("/register");
-
-  if (isAuthPage) {
+  // --- NEW: Rule for the Homepage ---
+  if (pathname === "/") {
     if (isLoggedIn) {
-      // If logged in, redirect away from auth pages to the main dashboard
-      return NextResponse.redirect(new URL("/dashboard", req.url));
+      // If logged in, redirect to their appropriate dashboard
+      const dashboardUrl =
+        token.role === "admin" || token.role === "staff"
+          ? "/admin/dashboard"
+          : "/dashboard";
+      return NextResponse.redirect(new URL(dashboardUrl, req.url));
     }
-    // If not logged in, allow access to the auth page
-    return null;
-  }
-
-  // For any other page, if the user is not logged in, redirect to the login page
-  if (!isLoggedIn) {
+    // If not logged in, redirect to the login page
     return NextResponse.redirect(new URL("/login", req.url));
   }
 
-  // Role-based redirects for logged-in users
-  const userRole = token.role;
-  if (
-    pathname.startsWith("/admin") &&
-    userRole !== "admin" &&
-    userRole !== "staff"
-  ) {
-    return NextResponse.redirect(new URL("/dashboard", req.url));
+  const isAuthPage =
+    pathname.startsWith("/login") ||
+    pathname.startsWith("/admin/login") ||
+    pathname.startsWith("/register") ||
+    pathname.startsWith("/forgot-password");
+
+  // Rule for Logged-In Users
+  if (isLoggedIn) {
+    if (isAuthPage) {
+      const dashboardUrl =
+        token.role === "admin" || token.role === "staff"
+          ? "/admin/dashboard"
+          : "/dashboard";
+      return NextResponse.redirect(new URL(dashboardUrl, req.url));
+    }
+
+    const userRole = token.role;
+    if (pathname.startsWith("/admin") && userRole === "customer") {
+      return NextResponse.redirect(new URL("/dashboard", req.url));
+    }
+    if (
+      pathname.startsWith("/dashboard") &&
+      (userRole === "admin" || userRole === "staff")
+    ) {
+      return NextResponse.redirect(new URL("/admin/dashboard", req.url));
+    }
   }
-  if (pathname.startsWith("/dashboard") && userRole !== "customer") {
-    return NextResponse.redirect(new URL("/admin/dashboard", req.url));
+
+  // Rule for Logged-Out Users
+  if (!isLoggedIn) {
+    if (pathname.startsWith("/dashboard")) {
+      return NextResponse.redirect(new URL("/login", req.url));
+    }
+    if (pathname.startsWith("/admin") && pathname !== "/admin/login") {
+      return NextResponse.redirect(new URL("/admin/login", req.url));
+    }
   }
 
   return NextResponse.next();
 }
 
+// This config specifies which routes the middleware should run on.
 export const config = {
-  matcher: ["/admin/:path*", "/dashboard/:path*", "/login", "/register"],
+  matcher: [
+    "/", // ADDED: The root homepage route
+    "/admin/:path*",
+    "/dashboard/:path*",
+    "/login",
+    "/admin/login",
+    "/register",
+    "/forgot-password",
+  ],
 };
