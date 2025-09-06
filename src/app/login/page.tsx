@@ -8,7 +8,7 @@ import { useRouter } from "next/navigation";
 import { ThemeSwitcher } from "@/components/ThemeSwitcher";
 import { GoogleIcon } from "@/components/GoogleIcon";
 
-export default function CustomerLoginPage() {
+export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
@@ -27,17 +27,18 @@ export default function CustomerLoginPage() {
     if (result?.error) {
       setError("Invalid email or password. Please try again.");
     } else if (result?.ok) {
-      // UPDATED: Redirect to the customer dashboard
-      router.push("/dashboard");
+      // After a successful login, we reload the page.
+      // The middleware will then catch the authenticated session and redirect to the correct dashboard.
+      router.refresh();
     }
   };
 
   return (
     <main className="flex flex-col items-center justify-center min-h-screen px-4">
-      {/* ... (rest of the JSX remains the same) ... */}
       <div className="absolute top-4 right-4">
         <ThemeSwitcher />
       </div>
+
       <div className="w-full max-w-sm p-6 space-y-6 text-center">
         <img
           src="/images/logo.png"
@@ -46,18 +47,23 @@ export default function CustomerLoginPage() {
           height="80"
           className="mx-auto"
         />
+
         <div className="login-card">
           <div className="text-center">
-            <h1 className="card-header">Welcome!</h1>
-            <p className="card-subheader">Sign in to your account.</p>
+            <h1 className="card-header">Sign In</h1>
+            <p className="card-subheader">
+              Welcome! Please enter your details.
+            </p>
           </div>
+
           <button
-            onClick={() => signIn("google", { callbackUrl: "/dashboard" })}
+            onClick={() => signIn("google", { callbackUrl: "/" })}
             className="google-btn"
           >
             <GoogleIcon className="w-6 h-6" />
             Sign In with Google
           </button>
+
           <div className="flex items-center my-4">
             <hr className="w-full border-gray-300 dark:border-gray-700" />
             <span className="px-2 text-sm text-gray-500 dark:text-gray-400">
@@ -65,6 +71,7 @@ export default function CustomerLoginPage() {
             </span>
             <hr className="w-full border-gray-300 dark:border-gray-700" />
           </div>
+
           <form className="space-y-5" onSubmit={handleSubmit}>
             {error && <p className="text-sm text-red-500">{error}</p>}
             <input

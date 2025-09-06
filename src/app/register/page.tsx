@@ -3,28 +3,54 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import { signIn } from "next-auth/react";
+import { useRouter } from "next/navigation";
 import { ThemeSwitcher } from "@/components/ThemeSwitcher";
-import { GoogleIcon } from "@/components/GoogleIcon"; // We will create this component
+import { GoogleIcon } from "@/components/GoogleIcon";
 
 export default function RegisterPage() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+  const router = useRouter();
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    // This is where you would call your backend API endpoint
-    // to handle email/password registration and save the user to MongoDB.
-    console.log("Registering with:", { name, email, password });
-    // Example:
-    /*
-    await fetch('/api/auth/register', {
-      method: 'POST',
+    setError("");
+
+    // Step 1: Call our new registration API endpoint
+    const response = await fetch("/api/auth/register", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ name, email, password }),
-      headers: { 'Content-Type': 'application/json' },
     });
-    */
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      // If registration failed, show the error message
+      setError(data.message || "Something went wrong.");
+      return;
+    }
+
+    // Step 2: If registration is successful, automatically sign the user in
+    const result = await signIn("credentials", {
+      redirect: false,
+      email,
+      password,
+    });
+
+    if (result?.error) {
+      // This might happen if auto-login fails, show an error but acknowledge registration
+      setError(
+        "Account created, but auto-login failed. Please log in manually."
+      );
+    } else if (result?.ok) {
+      // On successful login, refresh the page. The middleware will redirect them.
+      router.refresh();
+    }
   };
 
   return (
@@ -48,15 +74,13 @@ export default function RegisterPage() {
             <p className="card-subheader">Only for customers</p>
           </div>
 
-          <div className="flex flex-col w-full gap-2">
-            <button
-              onClick={() => signIn("google", { callbackUrl: "/" })} // Redirect to home page after sign-in
-              className="flex items-center justify-center w-full gap-3 px-4 py-3 font-semibold text-gray-800 bg-white border border-gray-300 rounded-md shadow-sm hover:bg-gray-50 dark:bg-gray-800 dark:text-gray-200 dark:hover:bg-gray-700 dark:border-gray-700"
-            >
-              <GoogleIcon className="w-6 h-6" />
-              Sign Up with Google
-            </button>
-          </div>
+          <button
+            onClick={() => signIn("google", { callbackUrl: "/dashboard" })}
+            className="google-btn"
+          >
+            <GoogleIcon className="w-6 h-6" />
+            Sign Up with Google
+          </button>
 
           <div className="flex items-center my-4">
             <hr className="w-full border-gray-300 dark:border-gray-700" />
@@ -67,6 +91,7 @@ export default function RegisterPage() {
           </div>
 
           <form className="space-y-5" onSubmit={handleSubmit}>
+            {error && <p className="text-sm text-red-500">{error}</p>}
             <input
               type="text"
               required
@@ -98,6 +123,14 @@ export default function RegisterPage() {
               Create Account
             </button>
           </form>
+          <div className="pt-4 text-center">
+            <Link
+              href="/login"
+              className="text-sm font-medium text-amber-600 hover:text-amber-500 dark:text-amber-500 dark:hover:text-amber-400"
+            >
+              Already have an account? Sign In
+            </Link>
+          </div>
         </div>
       </div>
     </main>
