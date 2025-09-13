@@ -74,12 +74,22 @@ async function main() {
       image: "",
     };
 
+    const knownStaff = {
+      name: "Test Staff",
+      email: "staff@test.com",
+      password: bcrypt.hashSync("password123", 10),
+      role: "staff",
+      emailVerified: new Date(),
+      image: "",
+    };
+
     const allUsers = [
       ...customers,
       ...staff,
       ...admins,
       knownAdmin,
       knownCustomer,
+      knownStaff,
     ];
 
     console.log("📥 Inserting dummy data into the database...");

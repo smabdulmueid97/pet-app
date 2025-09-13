@@ -7,6 +7,7 @@ import { ThemeProvider } from "./theme-provider";
 import { AuthProvider } from "./auth-provider";
 import Header from "@/components/Header"; // Import Header
 import Footer from "@/components/Footer"; // Import Footer
+import { headers } from "next/headers";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -20,9 +21,13 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const heads = headers();
+  const pathname = heads.get("next-url") || "";
+  const isAdminPage = pathname.startsWith("/admin");
+
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className={`${inter.className} flex flex-col min-h-screen`}>
+      <body className={`${inter.className}`}>
         <AuthProvider>
           <ThemeProvider
             attribute="class"
@@ -30,9 +35,15 @@ export default function RootLayout({
             enableSystem
             disableTransitionOnChange
           >
-            <Header />
-            <main className="flex-grow">{children}</main>
-            <Footer />
+            {isAdminPage ? (
+              <>{children}</>
+            ) : (
+              <div className="flex flex-col min-h-screen">
+                <Header />
+                <main className="flex-grow">{children}</main>
+                <Footer />
+              </div>
+            )}
           </ThemeProvider>
         </AuthProvider>
       </body>

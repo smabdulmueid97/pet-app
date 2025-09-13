@@ -1,13 +1,13 @@
 // File: src/app/api/auth/[...nextauth]/route.ts
 
-import NextAuth from "next-auth";
+import NextAuth, { NextAuthOptions } from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
 import CredentialsProvider from "next-auth/providers/credentials";
 import { MongoDBAdapter } from "@auth/mongodb-adapter";
 import clientPromise from "@/lib/mongodb";
 import bcrypt from "bcryptjs";
 
-const handler = NextAuth({
+export const authOptions: NextAuthOptions = {
   adapter: MongoDBAdapter(clientPromise),
   providers: [
     GoogleProvider({
@@ -60,22 +60,20 @@ const handler = NextAuth({
   callbacks: {
     async jwt({ token, user }) {
       if (user) {
-        // On sign-in, add the user's role to the token
-        // No 'as any' needed - TypeScript now knows about user.role
         token.role = user.role;
       }
       return token;
     },
     async session({ session, token }) {
       if (session?.user) {
-        // Add the role from the token to the session object
-        // No 'as any' needed - TypeScript now knows about session.user.role
         session.user.role = token.role;
       }
       return session;
     },
   },
   secret: process.env.NEXTAUTH_SECRET,
-});
+};
+
+const handler = NextAuth(authOptions);
 
 export { handler as GET, handler as POST };

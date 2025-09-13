@@ -69,4 +69,33 @@
   .dark .app-footer {
     @apply bg-black text-gray-400;
   }
+
+  /* Admin Dashboard Dark Mode Styles */
+  .admin-dashboard-card {
+    @apply p-4 mt-4 bg-white rounded-lg shadow-md;
+  }
+  .dark .admin-dashboard-card {
+    @apply bg-gray-800;
+  }
+
+  .admin-dashboard-table thead tr {
+    @apply border-b border-gray-200;
+  }
+  .dark .admin-dashboard-table thead tr {
+    @apply border-gray-700;
+  }
+
+  .admin-dashboard-table tbody tr {
+    @apply border-b border-gray-200;
+  }
+  .dark .admin-dashboard-table tbody tr {
+    @apply border-gray-700;
+  }
+
+  .admin-dashboard-table tbody tr:hover {
+    @apply bg-gray-50;
+  }
+  .dark .admin-dashboard-table tbody tr:hover {
+    @apply bg-gray-700;
+  }
 }

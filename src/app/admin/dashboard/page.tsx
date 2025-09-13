@@ -3,6 +3,7 @@
 import clientPromise from "@/lib/mongodb";
 import { getServerSession } from "next-auth";
 import { ObjectId } from "mongodb"; // Import ObjectId for database typing
+import { authOptions } from "../../api/auth/[...nextauth]/route";
 
 // Define the shape of a user document coming directly from MongoDB
 interface DbUser {
@@ -36,23 +37,23 @@ async function getUsers(): Promise<User[]> {
 }
 
 export default async function AdminDashboardPage() {
-  const session = await getServerSession();
+  const session = await getServerSession(authOptions);
   const users = await getUsers();
 
   return (
-    <div>
+    <div className="text-gray-900 dark:text-gray-100">
       <h1 className="text-3xl font-bold">Welcome, {session?.user?.name}!</h1>
-      <p className="mt-2 text-gray-600">
+      <p className="mt-2 text-gray-600 dark:text-gray-400">
         You are logged in as an{" "}
         <span className="font-semibold">{session?.user?.role}</span>.
       </p>
 
       <div className="mt-8">
         <h2 className="text-2xl font-bold">User Management</h2>
-        <div className="p-4 mt-4 bg-white rounded-lg shadow-md">
+        <div className="p-4 mt-4 bg-white dark:bg-gray-800 rounded-lg shadow-md">
           <table className="w-full text-left">
-            <thead>
-              <tr className="border-b">
+            <thead className="border-b border-gray-200 dark:border-gray-700">
+              <tr>
                 <th className="p-2">Name</th>
                 <th className="p-2">Email</th>
                 <th className="p-2">Role</th>
@@ -61,7 +62,10 @@ export default async function AdminDashboardPage() {
             <tbody>
               {/* TypeScript now understands the shape of 'user' */}
               {users.map((user) => (
-                <tr key={user._id} className="border-b hover:bg-gray-50">
+                <tr
+                  key={user._id}
+                  className="border-b border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700"
+                >
                   <td className="p-2">{user.name}</td>
                   <td className="p-2">{user.email}</td>
                   <td className="p-2 capitalize">{user.role}</td>
