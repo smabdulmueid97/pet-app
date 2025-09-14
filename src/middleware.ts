@@ -24,7 +24,6 @@ export async function middleware(req: NextRequest) {
 
   const isAuthPage =
     pathname.startsWith("/login") ||
-    pathname.startsWith("/admin/login") ||
     pathname.startsWith("/register") ||
     pathname.startsWith("/forgot-password");
 
@@ -52,11 +51,8 @@ export async function middleware(req: NextRequest) {
 
   // Rule for Logged-Out Users
   if (!isLoggedIn) {
-    if (pathname.startsWith("/dashboard")) {
+    if (pathname.startsWith("/dashboard") || pathname.startsWith("/admin")) {
       return NextResponse.redirect(new URL("/login", req.url));
-    }
-    if (pathname.startsWith("/admin") && pathname !== "/admin/login") {
-      return NextResponse.redirect(new URL("/admin/login", req.url));
     }
   }
 
@@ -70,7 +66,6 @@ export const config = {
     "/admin/:path*",
     "/dashboard/:path*",
     "/login",
-    "/admin/login",
     "/register",
     "/forgot-password",
   ],
