@@ -1,16 +1,14 @@
-// File: src/app/admin/layout.tsx
+// File: src/app/dashboard/layout.tsx
 
 "use client";
 
 import { useState } from "react";
 import { useSession, signOut } from "next-auth/react";
 import Link from "next/link";
-import { redirect } from "next/navigation";
+import { redirect, usePathname } from "next/navigation";
 import { ThemeSwitcher } from "@/components/ThemeSwitcher";
 
-const DAILY_QUOTA = 100;
-
-export default function AdminLayout({
+export default function DashboardLayout({
   children,
 }: {
   children: React.ReactNode;
@@ -22,6 +20,7 @@ export default function AdminLayout({
     },
   });
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const pathname = usePathname();
 
   if (status === "loading") {
     return (
@@ -31,67 +30,56 @@ export default function AdminLayout({
     );
   }
 
-  if (!session || !["admin", "staff"].includes(session.user?.role || "")) {
+  // Redirect if user is not a customer
+  if (session?.user?.role !== "customer") {
     redirect("/login");
     return null;
   }
 
+  const navLinks = [
+    { name: "Dashboard", href: "/dashboard" },
+    { name: "My Profile", href: "/dashboard/profile" },
+    { name: "My Appointments", href: "/dashboard/my-appointments" },
+  ];
+
   return (
-    <div className="flex min-h-screen">
+    <div className="flex min-h-screen bg-amber-50 dark:bg-black">
+      {/* Sidebar */}
       <aside
         className={`w-64 bg-white p-4 dark:bg-gray-800 text-gray-900 dark:text-white transform ${
           isSidebarOpen ? "translate-x-0" : "-translate-x-full"
         } md:translate-x-0 fixed md:relative h-full md:h-auto z-20 transition-transform duration-300 ease-in-out`}
       >
-        <h1 className="mb-6 text-2xl font-bold">Admin Portal</h1>
+        <div className="flex items-center justify-between mb-6">
+          <Link href="/" className="text-2xl font-bold">
+            PetApp
+          </Link>
+        </div>
         <nav className="space-y-2">
-          {/* Common Links for Admin & Staff */}
-          <Link
-            href="/admin/dashboard"
-            className="block px-4 py-2 rounded hover:bg-gray-100 dark:hover:bg-gray-700"
-            onClick={() => setIsSidebarOpen(false)}
-          >
-            Dashboard
-          </Link>
-          <Link
-            href="/admin/appointments"
-            className="block px-4 py-2 rounded hover:bg-gray-100 dark:hover:bg-gray-700"
-            onClick={() => setIsSidebarOpen(false)}
-          >
-            Appointments
-          </Link>
-
-          {/* Admin-Only Links */}
-          {session.user?.role === "admin" && (
-            <>
-              <hr className="my-2 border-gray-200 dark:border-gray-600" />
-              <p className="px-4 py-2 text-xs text-gray-500 dark:text-gray-400 uppercase">
-                Management
-              </p>
-              <Link
-                href="/admin/managestaff"
-                className="block px-4 py-2 rounded hover:bg-gray-100 dark:hover:bg-gray-700"
-                onClick={() => setIsSidebarOpen(false)}
-              >
-                Manage Staff
-              </Link>
-              <Link
-                href="#"
-                className="block px-4 py-2 rounded hover:bg-gray-100 dark:hover:bg-gray-700"
-                onClick={() => setIsSidebarOpen(false)}
-              >
-                Services
-              </Link>
-            </>
-          )}
+          {navLinks.map((link) => (
+            <Link
+              key={link.name}
+              href={link.href}
+              className={`block px-4 py-2 rounded ${
+                pathname === link.href
+                  ? "bg-amber-500 text-white"
+                  : "hover:bg-gray-100 dark:hover:bg-gray-700"
+              }`}
+              onClick={() => setIsSidebarOpen(false)}
+            >
+              {link.name}
+            </Link>
+          ))}
         </nav>
       </aside>
 
+      {/* Main Content */}
       <div className="flex flex-col flex-1">
+        {/* Header for mobile */}
         <header className="flex items-center justify-between p-4 bg-white dark:bg-gray-800 md:justify-end">
           <button
             onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-            className="p-2 rounded-md md:hidden hover:bg-gray-100 dark:hover:bg-gray-700"
+            className="p-2 rounded-md hover:bg-gray-100 dark:hover:bg-gray-700 md:hidden"
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -108,12 +96,9 @@ export default function AdminLayout({
               />
             </svg>
           </button>
-
           <div className="flex items-center gap-4">
             <ThemeSwitcher />
-            <div className="font-semibold">
-              Points: {session?.user?.points ?? 0} / {DAILY_QUOTA}
-            </div>
+            <span>Welcome, {session.user?.name}!</span>
             <button
               onClick={() => signOut({ callbackUrl: "/" })}
               className="px-4 py-2 text-sm font-semibold text-white bg-amber-500 rounded-md hover:bg-amber-600"
@@ -122,11 +107,11 @@ export default function AdminLayout({
             </button>
           </div>
         </header>
-        <main className="flex-1 p-4 md:p-8 bg-amber-50 dark:bg-black">
-          {children}
-        </main>
+
+        <main className="flex-1 p-4 md:p-8">{children}</main>
       </div>
 
+      {/* Overlay for mobile */}
       {isSidebarOpen && (
         <div
           className="fixed inset-0 z-10 bg-black opacity-50 md:hidden"

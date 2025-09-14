@@ -7,8 +7,6 @@ import { ThemeProvider } from "./theme-provider";
 import { AuthProvider } from "./auth-provider";
 import Header from "@/components/Header"; // Import Header
 import Footer from "@/components/Footer"; // Import Footer
-import { headers } from "next/headers";
-
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
@@ -21,9 +19,10 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const heads = headers();
-  const pathname = heads.get("next-url") || "";
+  const pathname =
+    typeof window !== "undefined" ? window.location.pathname : "";
   const isAdminPage = pathname.startsWith("/admin");
+  const isDashboardPage = pathname.startsWith("/dashboard"); // ADDED
 
   return (
     <html lang="en" suppressHydrationWarning>
@@ -35,7 +34,7 @@ export default function RootLayout({
             enableSystem
             disableTransitionOnChange
           >
-            {isAdminPage ? (
+            {isAdminPage || isDashboardPage ? ( // UPDATED
               <>{children}</>
             ) : (
               <div className="flex flex-col min-h-screen">

@@ -27,7 +27,6 @@ export const authOptions: NextAuthOptions = {
 
         const client = await clientPromise;
         const db = client.db();
-
         const user = await db
           .collection("users")
           .findOne({ email: credentials.email });
@@ -47,6 +46,9 @@ export const authOptions: NextAuthOptions = {
             name: user.name,
             email: user.email,
             role: user.role,
+            phone: user.phone,
+            pets: user.pets,
+            points: user.points, // ADDED
           };
         }
 
@@ -58,15 +60,24 @@ export const authOptions: NextAuthOptions = {
     strategy: "jwt",
   },
   callbacks: {
-    async jwt({ token, user }) {
+    async jwt({ token, user, trigger, session }) {
+      if (trigger === "update") {
+        return { ...token, ...session.user };
+      }
       if (user) {
         token.role = user.role;
+        token.phone = user.phone;
+        token.pets = user.pets;
+        token.points = user.points; // ADDED
       }
       return token;
     },
     async session({ session, token }) {
       if (session?.user) {
         session.user.role = token.role;
+        session.user.phone = token.phone;
+        session.user.pets = token.pets;
+        session.user.points = token.points; // ADDED
       }
       return session;
     },
